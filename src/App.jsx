@@ -45,10 +45,10 @@ function App() {
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
                 <div className="h-8 w-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mr-2">
-                  <span className="text-white font-bold text-lg">T</span>
+                  <span className="text-white font-bold text-lg">P</span>
                 </div>
                 <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-                  TaskFlow
+                  Project Management Tool
                 </span>
               </div>
               <nav className="hidden md:ml-8 md:flex md:space-x-6">
@@ -124,7 +124,7 @@ function App() {
       <footer className="bg-white dark:bg-surface-800 border-t border-surface-200 dark:border-surface-700 py-4 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center text-sm text-surface-500 dark:text-surface-400">
-            &copy; {new Date().getFullYear()} TaskFlow. All rights reserved.
+            &copy; {new Date().getFullYear()} Project Management Tool. All rights reserved.
           </div>
         </div>
       </footer>
