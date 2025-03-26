@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, X, Edit2, Calendar, Clock, User, AlertCircle, CheckCircle, ArrowRight } from 'lucide-react'
+import { Plus, X, Edit2, Calendar, Clock, User, AlertCircle, CheckCircle, ArrowRight, ChevronUp, ChevronDown, Filter, List } from 'lucide-react'
 
 const MainFeature = ({ activeView, projectId }) => {
   // Sample data for tasks
@@ -50,6 +50,8 @@ const MainFeature = ({ activeView, projectId }) => {
   })
   const [draggedTask, setDraggedTask] = useState(null)
   const [draggedOverColumn, setDraggedOverColumn] = useState(null)
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' })
+  const [filterStatus, setFilterStatus] = useState('all')
 
   // Reset columns when project changes
   useEffect(() => {
@@ -154,6 +156,50 @@ const MainFeature = ({ activeView, projectId }) => {
     }
   }
 
+  // Get all tasks from all columns
+  const getAllTasks = () => {
+    const allTasks = []
+    columns.forEach(column => {
+      column.tasks.forEach(task => {
+        allTasks.push({
+          ...task,
+          status: column.title
+        })
+      })
+    })
+    return allTasks
+  }
+
+  // Sort tasks based on sort configuration
+  const getSortedTasks = (tasks) => {
+    if (!sortConfig.key) return tasks
+
+    return [...tasks].sort((a, b) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) {
+        return sortConfig.direction === 'ascending' ? -1 : 1
+      }
+      if (a[sortConfig.key] > b[sortConfig.key]) {
+        return sortConfig.direction === 'ascending' ? 1 : -1
+      }
+      return 0
+    })
+  }
+
+  // Handle sorting when a table header is clicked
+  const requestSort = (key) => {
+    let direction = 'ascending'
+    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending'
+    }
+    setSortConfig({ key, direction })
+  }
+
+  // Get sorted icon for table header
+  const getSortIcon = (key) => {
+    if (sortConfig.key !== key) return null
+    return sortConfig.direction === 'ascending' ? <ChevronUp size={16} /> : <ChevronDown size={16} />
+  }
+
   // Render Kanban Board View
   const renderKanbanBoard = () => (
     <div className="overflow-x-auto pb-4">
@@ -219,6 +265,141 @@ const MainFeature = ({ activeView, projectId }) => {
     </div>
   )
 
+  // Render Table View
+  const renderTableView = () => {
+    const allTasks = getAllTasks()
+    const filteredTasks = filterStatus === 'all' 
+      ? allTasks 
+      : allTasks.filter(task => task.status === filterStatus)
+    const sortedTasks = getSortedTasks(filteredTasks)
+
+    return (
+      <div className="bg-white dark:bg-surface-800 rounded-lg">
+        <div className="p-4 border-b border-surface-200 dark:border-surface-700 flex justify-between items-center">
+          <div className="flex items-center gap-2 text-surface-500 dark:text-surface-400">
+            <Filter size={16} />
+            <span>Filter by status:</span>
+            <select 
+              className="input py-1 px-2"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">All</option>
+              {columns.map(column => (
+                <option key={column.id} value={column.title}>{column.title}</option>
+              ))}
+            </select>
+          </div>
+          <button 
+            onClick={() => setShowTaskModal(true)}
+            className="btn btn-primary flex items-center gap-2 py-1"
+          >
+            <Plus size={16} />
+            <span>New Task</span>
+          </button>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-surface-100 dark:bg-surface-700">
+              <tr>
+                <th 
+                  className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300 cursor-pointer"
+                  onClick={() => requestSort('title')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Task</span>
+                    {getSortIcon('title')}
+                  </div>
+                </th>
+                <th 
+                  className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300 cursor-pointer"
+                  onClick={() => requestSort('status')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Status</span>
+                    {getSortIcon('status')}
+                  </div>
+                </th>
+                <th 
+                  className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300 cursor-pointer"
+                  onClick={() => requestSort('priority')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Priority</span>
+                    {getSortIcon('priority')}
+                  </div>
+                </th>
+                <th 
+                  className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300 cursor-pointer"
+                  onClick={() => requestSort('assignee')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Assignee</span>
+                    {getSortIcon('assignee')}
+                  </div>
+                </th>
+                <th 
+                  className="px-4 py-3 text-left font-medium text-surface-700 dark:text-surface-300 cursor-pointer"
+                  onClick={() => requestSort('dueDate')}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>Due Date</span>
+                    {getSortIcon('dueDate')}
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedTasks.map(task => (
+                <tr 
+                  key={task.id}
+                  className="border-b border-surface-200 dark:border-surface-700 hover:bg-surface-50 dark:hover:bg-surface-700/50 cursor-pointer transition-colors duration-150"
+                  onClick={() => handleTaskClick(task)}
+                >
+                  <td className="px-4 py-3">
+                    <div className="font-medium">{task.title}</div>
+                    <div className="text-sm text-surface-500 dark:text-surface-400 line-clamp-1">{task.description}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="px-2 py-1 text-xs rounded-full bg-surface-200 dark:bg-surface-600">
+                      {task.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs px-2 py-1 rounded-full ${getPriorityColor(task.priority)}`}>
+                      {task.priority}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center">
+                      <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-xs mr-2">
+                        {task.assignee.charAt(0)}
+                      </div>
+                      <span>{task.assignee}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex items-center text-surface-500 dark:text-surface-400">
+                      <Calendar size={14} className="mr-2" />
+                      <span>{new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {sortedTasks.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="px-4 py-8 text-center text-surface-500 dark:text-surface-400">
+                    No tasks found. Add a new task or change your filter.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )
+  }
+
   // Render Gantt Chart View (simplified for MVP)
   const renderGanttChart = () => (
     <div className="bg-white dark:bg-surface-800 rounded-lg p-6 text-center">
@@ -234,7 +415,47 @@ const MainFeature = ({ activeView, projectId }) => {
 
   return (
     <div>
-      {activeView === 'kanban' ? renderKanbanBoard() : renderGanttChart()}
+      <div className="border-b border-surface-200 dark:border-surface-700 px-6 py-4 mb-6">
+        <div className="flex space-x-4">
+          <button
+            onClick={() => setActiveTab('kanban')}
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeView === 'kanban' 
+                ? 'bg-primary/10 text-primary dark:bg-primary/20' 
+                : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700'
+            }`}
+          >
+            Kanban Board
+          </button>
+          <button
+            onClick={() => setActiveTab('table')}
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeView === 'table' 
+                ? 'bg-primary/10 text-primary dark:bg-primary/20' 
+                : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700'
+            }`}
+          >
+            <div className="flex items-center gap-1">
+              <List size={16} />
+              <span>Table View</span>
+            </div>
+          </button>
+          <button
+            onClick={() => setActiveTab('gantt')}
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeView === 'gantt' 
+                ? 'bg-primary/10 text-primary dark:bg-primary/20' 
+                : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700'
+            }`}
+          >
+            Gantt Chart
+          </button>
+        </div>
+      </div>
+      
+      {activeView === 'kanban' && renderKanbanBoard()}
+      {activeView === 'table' && renderTableView()}
+      {activeView === 'gantt' && renderGanttChart()}
       
       {/* Task Modal */}
       <AnimatePresence>
@@ -303,6 +524,16 @@ const MainFeature = ({ activeView, projectId }) => {
                           <p className="font-medium">{new Date(activeTask.dueDate).toLocaleDateString()}</p>
                         </div>
                       </div>
+
+                      {activeTask.status && (
+                        <div className="flex items-center">
+                          <CheckCircle size={16} className="mr-2 text-surface-500 dark:text-surface-400" />
+                          <div>
+                            <p className="text-xs text-surface-500 dark:text-surface-400">Status</p>
+                            <p className="font-medium">{activeTask.status}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex justify-end gap-2 mt-6">

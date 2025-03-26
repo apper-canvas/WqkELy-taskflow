@@ -122,6 +122,16 @@ const Home = () => {
                   Kanban Board
                 </button>
                 <button
+                  onClick={() => setActiveTab('table')}
+                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+                    activeTab === 'table' 
+                      ? 'bg-primary/10 text-primary dark:bg-primary/20' 
+                      : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700'
+                  }`}
+                >
+                  Table View
+                </button>
+                <button
                   onClick={() => setActiveTab('gantt')}
                   className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
                     activeTab === 'gantt' 
