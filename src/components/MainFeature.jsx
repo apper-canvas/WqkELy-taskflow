@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, X, Edit2, Calendar, Clock, User, AlertCircle, CheckCircle, ArrowRight, ChevronUp, ChevronDown, Filter, List } from 'lucide-react'
 
-const MainFeature = ({ activeView, projectId }) => {
+const MainFeature = ({ activeView, projectId, onViewChange }) => {
   // Sample data for tasks
   const initialColumns = [
     {
@@ -418,7 +418,7 @@ const MainFeature = ({ activeView, projectId }) => {
       <div className="border-b border-surface-200 dark:border-surface-700 px-6 py-4 mb-6">
         <div className="flex space-x-4">
           <button
-            onClick={() => setActiveTab('kanban')}
+            onClick={() => onViewChange('kanban')}
             className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
               activeView === 'kanban' 
                 ? 'bg-primary/10 text-primary dark:bg-primary/20' 
@@ -428,7 +428,7 @@ const MainFeature = ({ activeView, projectId }) => {
             Kanban Board
           </button>
           <button
-            onClick={() => setActiveTab('table')}
+            onClick={() => onViewChange('table')}
             className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
               activeView === 'table' 
                 ? 'bg-primary/10 text-primary dark:bg-primary/20' 
@@ -441,7 +441,7 @@ const MainFeature = ({ activeView, projectId }) => {
             </div>
           </button>
           <button
-            onClick={() => setActiveTab('gantt')}
+            onClick={() => onViewChange('gantt')}
             className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
               activeView === 'gantt' 
                 ? 'bg-primary/10 text-primary dark:bg-primary/20' 
