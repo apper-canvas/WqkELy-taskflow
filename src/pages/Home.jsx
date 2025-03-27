@@ -1,222 +1,287 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, ChevronDown, Clock, CheckCircle2, AlertCircle, BarChart2 } from 'lucide-react'
+import { ArrowRight, ArrowUpRight, Plus, Star, Calendar, Clock } from 'lucide-react'
 import MainFeature from '../components/MainFeature'
 
-const Home = () => {
-  const [activeTab, setActiveTab] = useState('kanban')
-  const [showProjectMenu, setShowProjectMenu] = useState(false)
-  
-  // Sample project data
-  const projects = [
-    { id: 1, name: "Website Redesign", tasks: 12, completed: 5, dueDate: "2023-12-15" },
-    { id: 2, name: "Mobile App Development", tasks: 24, completed: 18, dueDate: "2023-11-30" },
-    { id: 3, name: "Marketing Campaign", tasks: 8, completed: 2, dueDate: "2023-12-05" }
-  ]
-  
-  const [selectedProject, setSelectedProject] = useState(projects[0])
-  
-  // Sample task statistics
-  const taskStats = [
-    { name: "To Do", count: 7, color: "bg-surface-400" },
-    { name: "In Progress", count: 4, color: "bg-primary" },
-    { name: "Review", count: 3, color: "bg-secondary" },
-    { name: "Done", count: 5, color: "bg-green-500" }
-  ]
-  
-  // Sample upcoming tasks
-  const upcomingTasks = [
-    { id: 1, title: "Design homepage mockup", priority: "High", dueDate: "Today", status: "In Progress" },
-    { id: 2, title: "API integration", priority: "Medium", dueDate: "Tomorrow", status: "To Do" },
-    { id: 3, title: "User testing", priority: "High", dueDate: "In 2 days", status: "To Do" }
-  ]
-  
-  const handleProjectChange = (project) => {
-    setSelectedProject(project)
-    setShowProjectMenu(false)
+const projects = [
+  {
+    id: 'p1',
+    name: 'Website Redesign',
+    description: 'Revamp the company website with modern design and improved UX',
+    progress: 75,
+    dueDate: '2023-12-15',
+    team: [
+      { id: 'u1', name: 'Alex Johnson', avatar: 'A' },
+      { id: 'u2', name: 'Sarah Miller', avatar: 'S' },
+      { id: 'u3', name: 'Mike Chen', avatar: 'M' }
+    ],
+    color: 'from-primary to-primary-dark',
+    favorite: true
+  },
+  {
+    id: 'p2',
+    name: 'Mobile App Development',
+    description: 'Create a new mobile application for customer engagement',
+    progress: 45,
+    dueDate: '2024-01-20',
+    team: [
+      { id: 'u3', name: 'Mike Chen', avatar: 'M' },
+      { id: 'u4', name: 'Jessica Wong', avatar: 'J' }
+    ],
+    color: 'from-secondary to-secondary-dark',
+    favorite: false
+  },
+  {
+    id: 'p3',
+    name: 'Marketing Campaign',
+    description: 'Q1 marketing campaign for product launch',
+    progress: 20,
+    dueDate: '2024-02-05',
+    team: [
+      { id: 'u2', name: 'Sarah Miller', avatar: 'S' },
+      { id: 'u5', name: 'David Park', avatar: 'D' },
+      { id: 'u6', name: 'Emily Clark', avatar: 'E' }
+    ],
+    color: 'from-neon to-neon-dark',
+    favorite: false
+  },
+  {
+    id: 'p4',
+    name: 'Product Feature Expansion',
+    description: 'Add new features to existing product based on user feedback',
+    progress: 60,
+    dueDate: '2023-12-30',
+    team: [
+      { id: 'u1', name: 'Alex Johnson', avatar: 'A' },
+      { id: 'u3', name: 'Mike Chen', avatar: 'M' },
+      { id: 'u7', name: 'Ryan Lewis', avatar: 'R' }
+    ],
+    color: 'from-electric to-electric-dark',
+    favorite: true
   }
+]
+
+const Home = ({ onTaskCompletion }) => {
+  const [activeProject, setActiveProject] = useState(projects[0])
+  const [activeView, setActiveView] = useState('kanban')
   
+  const handleProjectSelect = (project) => {
+    setActiveProject(project)
+  }
+
+  const handleViewChange = (view) => {
+    setActiveView(view)
+  }
+
+  // Check if all tasks are completed in the Done column
+  const checkAllTasksCompleted = (columns) => {
+    // If all tasks are in the "done" column, call onTaskCompletion
+    let totalTasks = 0
+    let doneTasks = 0
+    
+    columns.forEach(column => {
+      totalTasks += column.tasks.length
+      if (column.id === 'done') {
+        doneTasks = column.tasks.length
+      }
+    })
+    
+    if (totalTasks > 0 && totalTasks === doneTasks) {
+      if (onTaskCompletion) onTaskCompletion(true)
+    }
+  }
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-surface-800 dark:text-surface-100">Project Dashboard</h1>
-          <p className="text-surface-500 dark:text-surface-400 mt-1">Manage your projects and tasks efficiently</p>
-        </div>
-        
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <button 
-              onClick={() => setShowProjectMenu(!showProjectMenu)}
-              className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-surface-700 border border-surface-200 dark:border-surface-600 rounded-lg shadow-sm hover:bg-surface-50 dark:hover:bg-surface-600 transition-colors duration-200"
-            >
-              <span className="font-medium">{selectedProject.name}</span>
-              <ChevronDown size={16} className={`transition-transform duration-200 ${showProjectMenu ? 'rotate-180' : ''}`} />
-            </button>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-white dark:bg-surface-800 rounded-xl p-4 shadow-sm border border-surface-200 dark:border-surface-700">
+            <div className="mb-4 flex justify-between items-center">
+              <h2 className="text-lg font-semibold">Projects</h2>
+              <button className="p-1.5 rounded-lg bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-light hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors duration-200">
+                <Plus size={18} />
+              </button>
+            </div>
             
-            {showProjectMenu && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 mt-2 w-56 bg-white dark:bg-surface-700 border border-surface-200 dark:border-surface-600 rounded-lg shadow-lg z-10"
-              >
-                <div className="py-1">
-                  {projects.map(project => (
-                    <button
-                      key={project.id}
-                      onClick={() => handleProjectChange(project)}
-                      className="w-full text-left px-4 py-2 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-600 transition-colors duration-200"
-                    >
-                      {project.name}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
+            <div className="space-y-2">
+              {projects.map(project => (
+                <motion.button
+                  key={project.id}
+                  onClick={() => handleProjectSelect(project)}
+                  className={`w-full text-left p-3 rounded-lg transition-colors duration-200 ${
+                    activeProject.id === project.id
+                      ? 'bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light'
+                      : 'hover:bg-surface-50 dark:hover:bg-surface-700'
+                  }`}
+                  whileHover={{ x: 4 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="flex justify-between items-start">
+                    <span className="font-medium">{project.name}</span>
+                    {project.favorite && <Star size={16} className="text-amber-400 fill-amber-400" />}
+                  </div>
+                  <div className="mt-1 flex justify-between items-center">
+                    <div className="text-xs text-surface-500 dark:text-surface-400 flex items-center">
+                      <Calendar size={12} className="mr-1" />
+                      <span>{new Date(project.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                    </div>
+                    <div className="flex -space-x-2">
+                      {project.team.slice(0, 3).map(member => (
+                        <div 
+                          key={member.id}
+                          className="h-6 w-6 rounded-full bg-surface-200 dark:bg-surface-600 flex items-center justify-center text-xs font-medium ring-2 ring-white dark:ring-surface-800"
+                        >
+                          {member.avatar}
+                        </div>
+                      ))}
+                      {project.team.length > 3 && (
+                        <div className="h-6 w-6 rounded-full bg-surface-200 dark:bg-surface-600 flex items-center justify-center text-xs font-medium ring-2 ring-white dark:ring-surface-800">
+                          +{project.team.length - 3}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.button>
+              ))}
+            </div>
           </div>
           
-          <button className="btn btn-primary flex items-center gap-2">
-            <Plus size={18} />
-            <span>New Task</span>
-          </button>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {taskStats.map((stat, index) => (
-          <motion.div
-            key={stat.name}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="card p-6 flex items-center"
-          >
-            <div className={`w-12 h-12 rounded-lg ${stat.color} flex items-center justify-center text-white`}>
-              {stat.name === "To Do" && <Clock size={24} />}
-              {stat.name === "In Progress" && <BarChart2 size={24} />}
-              {stat.name === "Review" && <AlertCircle size={24} />}
-              {stat.name === "Done" && <CheckCircle2 size={24} />}
-            </div>
-            <div className="ml-4">
-              <h3 className="text-lg font-semibold">{stat.count}</h3>
-              <p className="text-surface-500 dark:text-surface-400 text-sm">{stat.name}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-        <div className="lg:col-span-2">
-          <div className="card">
-            <div className="border-b border-surface-200 dark:border-surface-700 px-6 py-4">
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => setActiveTab('kanban')}
-                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                    activeTab === 'kanban' 
-                      ? 'bg-primary/10 text-primary dark:bg-primary/20' 
-                      : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700'
-                  }`}
-                >
-                  Kanban Board
-                </button>
-                <button
-                  onClick={() => setActiveTab('table')}
-                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                    activeTab === 'table' 
-                      ? 'bg-primary/10 text-primary dark:bg-primary/20' 
-                      : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700'
-                  }`}
-                >
-                  Table View
-                </button>
-                <button
-                  onClick={() => setActiveTab('gantt')}
-                  className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
-                    activeTab === 'gantt' 
-                      ? 'bg-primary/10 text-primary dark:bg-primary/20' 
-                      : 'text-surface-600 dark:text-surface-400 hover:bg-surface-100 dark:hover:bg-surface-700'
-                  }`}
-                >
-                  Gantt Chart
-                </button>
-              </div>
-            </div>
-            <div className="p-6">
-              <MainFeature activeView={activeTab} projectId={selectedProject.id} />
-            </div>
+          <div className="bg-gradient-to-br from-electric to-neon rounded-xl p-5 text-white shadow-sm">
+            <h3 className="font-semibold text-lg mb-2">Premium Features</h3>
+            <p className="text-sm opacity-90 mb-4">Unlock advanced project management tools and insights with our premium plan.</p>
+            <button className="btn bg-white/20 hover:bg-white/30 text-white flex items-center gap-1">
+              <span>Explore Premium</span>
+              <ArrowUpRight size={16} />
+            </button>
           </div>
         </div>
         
-        <div>
-          <div className="card">
-            <div className="border-b border-surface-200 dark:border-surface-700 px-6 py-4">
-              <h2 className="text-lg font-semibold">Upcoming Tasks</h2>
+        <div className="lg:col-span-3 space-y-6">
+          <div className="bg-white dark:bg-surface-800 rounded-xl p-6 shadow-sm border border-surface-200 dark:border-surface-700">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h1 className="text-2xl font-bold mb-1">{activeProject.name}</h1>
+                <p className="text-surface-600 dark:text-surface-400">{activeProject.description}</p>
+              </div>
+              <button className="btn btn-primary self-start sm:self-center flex items-center gap-1">
+                <span>Project Settings</span>
+                <ArrowRight size={16} />
+              </button>
             </div>
-            <div className="p-4">
-              {upcomingTasks.map(task => (
-                <div 
-                  key={task.id}
-                  className="p-4 border-b border-surface-200 dark:border-surface-700 last:border-0"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-medium">{task.title}</h3>
-                    <span className={`badge ${
-                      task.priority === 'High' ? 'badge-accent' : 
-                      task.priority === 'Medium' ? 'badge-secondary' : 'badge-primary'
-                    }`}>
-                      {task.priority}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm text-surface-500 dark:text-surface-400">
-                    <span>Due: {task.dueDate}</span>
-                    <span>{task.status}</span>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-surface-50 dark:bg-surface-700/50 p-4 rounded-lg">
+                <div className="text-sm text-surface-500 dark:text-surface-400 mb-1">Progress</div>
+                <div className="flex items-center gap-3">
+                  <div className="text-xl font-semibold">{activeProject.progress}%</div>
+                  <div className="flex-1 h-2 bg-surface-200 dark:bg-surface-600 rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full bg-gradient-to-r ${activeProject.color}`}
+                      style={{ width: `${activeProject.progress}%` }}
+                    ></div>
                   </div>
                 </div>
-              ))}
+              </div>
               
-              <div className="p-4">
-                <button className="w-full btn btn-outline flex items-center justify-center gap-2">
-                  <Plus size={16} />
-                  <span>Add Task</span>
-                </button>
+              <div className="bg-surface-50 dark:bg-surface-700/50 p-4 rounded-lg">
+                <div className="text-sm text-surface-500 dark:text-surface-400 mb-1">Due Date</div>
+                <div className="flex items-center gap-2">
+                  <Calendar size={18} className="text-primary dark:text-primary-light" />
+                  <div className="text-lg font-medium">
+                    {new Date(activeProject.dueDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-surface-50 dark:bg-surface-700/50 p-4 rounded-lg">
+                <div className="text-sm text-surface-500 dark:text-surface-400 mb-1">Team</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex -space-x-2">
+                    {activeProject.team.map(member => (
+                      <div 
+                        key={member.id}
+                        className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light flex items-center justify-center font-medium ring-2 ring-white dark:ring-surface-800"
+                      >
+                        {member.avatar}
+                      </div>
+                    ))}
+                  </div>
+                  <button className="text-surface-600 dark:text-surface-400 hover:text-primary dark:hover:text-primary-light transition-colors">
+                    <Plus size={18} />
+                  </button>
+                </div>
               </div>
             </div>
+            
+            <MainFeature 
+              activeView={activeView} 
+              projectId={activeProject.id} 
+              onViewChange={handleViewChange}
+              onTaskUpdate={checkAllTasksCompleted}
+            />
           </div>
           
-          <div className="card mt-6">
-            <div className="border-b border-surface-200 dark:border-surface-700 px-6 py-4">
-              <h2 className="text-lg font-semibold">Project Progress</h2>
-            </div>
-            <div className="p-6">
-              <div className="mb-4">
-                <div className="flex justify-between mb-2">
-                  <span className="text-sm text-surface-600 dark:text-surface-400">Completion</span>
-                  <span className="text-sm font-medium">
-                    {Math.round((selectedProject.completed / selectedProject.tasks) * 100)}%
-                  </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="bg-white dark:bg-surface-800 rounded-xl p-4 shadow-sm border border-surface-200 dark:border-surface-700">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold">Recent Activity</h3>
+                <button className="text-sm text-primary dark:text-primary-light">View All</button>
+              </div>
+              <div className="space-y-3">
+                <div className="flex gap-3 text-sm">
+                  <div className="h-8 w-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary flex-shrink-0">
+                    <Clock size={16} />
+                  </div>
+                  <div>
+                    <p className="text-surface-800 dark:text-surface-200">
+                      <span className="font-medium">Sarah</span> updated task status to "In Progress"
+                    </p>
+                    <p className="text-xs text-surface-500 dark:text-surface-400">2 hours ago</p>
+                  </div>
                 </div>
-                <div className="w-full bg-surface-200 dark:bg-surface-700 rounded-full h-2.5">
-                  <div 
-                    className="bg-primary h-2.5 rounded-full" 
-                    style={{ width: `${(selectedProject.completed / selectedProject.tasks) * 100}%` }}
-                  ></div>
+                <div className="flex gap-3 text-sm">
+                  <div className="h-8 w-8 rounded-full bg-accent/10 flex items-center justify-center text-accent flex-shrink-0">
+                    <Plus size={16} />
+                  </div>
+                  <div>
+                    <p className="text-surface-800 dark:text-surface-200">
+                      <span className="font-medium">Mike</span> added a new task "Create API documentation"
+                    </p>
+                    <p className="text-xs text-surface-500 dark:text-surface-400">Yesterday</p>
+                  </div>
                 </div>
               </div>
-              
-              <div className="flex justify-between text-sm">
-                <div>
-                  <p className="text-surface-500 dark:text-surface-400">Total Tasks</p>
-                  <p className="font-medium text-lg">{selectedProject.tasks}</p>
+            </div>
+            
+            <div className="bg-white dark:bg-surface-800 rounded-xl p-4 shadow-sm border border-surface-200 dark:border-surface-700">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold">Upcoming Deadlines</h3>
+                <button className="text-sm text-primary dark:text-primary-light">View Calendar</button>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-2 bg-surface-50 dark:bg-surface-700/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+                      <Calendar size={20} className="text-primary dark:text-primary-light" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Design Review</p>
+                      <p className="text-xs text-surface-500 dark:text-surface-400">Project: Website Redesign</p>
+                    </div>
+                  </div>
+                  <div className="text-accent font-medium">Tomorrow</div>
                 </div>
-                <div>
-                  <p className="text-surface-500 dark:text-surface-400">Completed</p>
-                  <p className="font-medium text-lg">{selectedProject.completed}</p>
-                </div>
-                <div>
-                  <p className="text-surface-500 dark:text-surface-400">Due Date</p>
-                  <p className="font-medium text-lg">{new Date(selectedProject.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                <div className="flex items-center justify-between p-2 bg-surface-50 dark:bg-surface-700/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-electric/10 dark:bg-electric/20 flex items-center justify-center">
+                      <Calendar size={20} className="text-electric dark:text-electric-light" />
+                    </div>
+                    <div>
+                      <p className="font-medium">API Integration</p>
+                      <p className="text-xs text-surface-500 dark:text-surface-400">Project: Mobile App Development</p>
+                    </div>
+                  </div>
+                  <div className="text-surface-600 dark:text-surface-400 font-medium">Dec 8</div>
                 </div>
               </div>
             </div>

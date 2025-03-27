@@ -4,6 +4,7 @@ import { Sun, Moon, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
+import CelebrationModal from './components/CelebrationModal'
 
 function App() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -12,6 +13,7 @@ function App() {
   })
   
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [showCelebration, setShowCelebration] = useState(false)
 
   useEffect(() => {
     if (darkMode) {
@@ -28,6 +30,12 @@ function App() {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(prev => !prev)
+  }
+
+  const handleTaskCompletion = (allTasksCompleted) => {
+    if (allTasksCompleted) {
+      setShowCelebration(true)
+    }
   }
 
   const navLinks = [
@@ -116,7 +124,7 @@ function App() {
 
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home onTaskCompletion={handleTaskCompletion} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
@@ -128,6 +136,15 @@ function App() {
           </div>
         </div>
       </footer>
+
+      <AnimatePresence>
+        {showCelebration && (
+          <CelebrationModal 
+            onClose={() => setShowCelebration(false)}
+            message="Congratulations! All tasks completed!"
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
