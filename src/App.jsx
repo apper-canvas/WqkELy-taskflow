@@ -44,10 +44,10 @@ function App() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
-                <div className="h-8 w-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mr-2">
+                <div className="h-8 w-8 bg-gradient-to-br from-primary to-neon rounded-lg flex items-center justify-center mr-2">
                   <span className="text-white font-bold text-lg">P</span>
                 </div>
-                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                <span className="text-xl font-bold gradient-text gradient-primary">
                   Project Management Tool
                 </span>
               </div>

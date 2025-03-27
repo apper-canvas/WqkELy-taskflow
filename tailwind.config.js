@@ -8,16 +8,31 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#6366f1',
-          light: '#818cf8',
-          dark: '#4f46e5'
+          DEFAULT: '#4f46e5', // More saturated indigo
+          light: '#6366f1',   // Brighter mid-tone
+          dark: '#3730a3'     // Rich dark tone
         },
         secondary: {
-          DEFAULT: '#14b8a6',
-          light: '#2dd4bf',
-          dark: '#0d9488'
+          DEFAULT: '#06b6d4', // Vibrant cyan
+          light: '#22d3ee',   // Bright cyan
+          dark: '#0891b2'     // Deep cyan
         },
-        accent: '#f43f5e',
+        accent: '#f43f5e',    // Bright pink
+        electric: {
+          DEFAULT: '#facc15', // Vibrant yellow
+          light: '#fde047',   // Light yellow
+          dark: '#eab308'     // Deep yellow
+        },
+        neon: {
+          DEFAULT: '#a855f7', // Vibrant purple
+          light: '#c084fc',   // Light purple
+          dark: '#9333ea'     // Deep purple
+        },
+        tropical: {
+          DEFAULT: '#fb7185', // Vibrant coral
+          light: '#fda4af',   // Light coral
+          dark: '#e11d48'     // Deep coral/red
+        },
         surface: {
           50: '#f8fafc',   // Lightest
           100: '#f1f5f9',

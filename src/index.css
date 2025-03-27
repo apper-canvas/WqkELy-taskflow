@@ -29,6 +29,18 @@
     @apply border border-surface-300 dark:border-surface-600 bg-transparent hover:bg-surface-100 dark:hover:bg-surface-700 focus:ring-surface-400;
   }
   
+  .btn-electric {
+    @apply bg-electric text-surface-800 hover:bg-electric-dark focus:ring-electric;
+  }
+  
+  .btn-neon {
+    @apply bg-neon text-white hover:bg-neon-dark focus:ring-neon;
+  }
+  
+  .btn-tropical {
+    @apply bg-tropical text-white hover:bg-tropical-dark focus:ring-tropical;
+  }
+  
   .card {
     @apply bg-white dark:bg-surface-800 rounded-xl shadow-card dark:shadow-none border border-surface-200 dark:border-surface-700 overflow-hidden transition-all duration-300;
   }
@@ -60,6 +72,18 @@
   .badge-accent {
     @apply bg-accent/20 text-accent dark:bg-accent/30 dark:text-accent;
   }
+  
+  .badge-electric {
+    @apply bg-electric-light/20 text-electric-dark dark:bg-electric-dark/30 dark:text-electric;
+  }
+  
+  .badge-neon {
+    @apply bg-neon-light/20 text-neon-dark dark:bg-neon-dark/30 dark:text-neon-light;
+  }
+  
+  .badge-tropical {
+    @apply bg-tropical-light/20 text-tropical-dark dark:bg-tropical-dark/30 dark:text-tropical-light;
+  }
 }
 
 @layer utilities {
@@ -77,5 +101,21 @@
   
   .neu-dark {
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3), -5px -5px 15px rgba(255, 255, 255, 0.05);
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r;
+  }
+  
+  .gradient-primary {
+    @apply from-primary to-neon;
+  }
+  
+  .gradient-secondary {
+    @apply from-secondary to-tropical;
+  }
+  
+  .gradient-vibrant {
+    @apply from-electric via-accent to-neon;
   }
 }
