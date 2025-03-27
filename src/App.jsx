@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { Sun, Moon, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Home from './pages/Home'
+import Contact from './pages/Contact'
 import NotFound from './pages/NotFound'
 import CelebrationModal from './components/CelebrationModal'
 
@@ -43,6 +44,7 @@ function App() {
     { name: "Projects", path: "/projects" },
     { name: "Tasks", path: "/tasks" },
     { name: "Team", path: "/team" },
+    { name: "Contact", path: "/contact" },
   ]
 
   return (
@@ -125,6 +127,7 @@ function App() {
       <main className="flex-grow">
         <Routes>
           <Route path="/" element={<Home onTaskCompletion={handleTaskCompletion} />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
